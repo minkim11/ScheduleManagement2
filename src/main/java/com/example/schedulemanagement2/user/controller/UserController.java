@@ -1,9 +1,6 @@
 package com.example.schedulemanagement2.user.controller;
 
-import com.example.schedulemanagement2.user.dto.CreateUserRequest;
-import com.example.schedulemanagement2.user.dto.CreateUserResponse;
-import com.example.schedulemanagement2.user.dto.ReadAllUsersResponse;
-import com.example.schedulemanagement2.user.dto.ReadOneUserResponse;
+import com.example.schedulemanagement2.user.dto.*;
 import com.example.schedulemanagement2.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +32,13 @@ public class UserController {
             @PathVariable Long id
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findOneUser(id));
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<UpdateUserResponse> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateUserRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, request));
     }
 }

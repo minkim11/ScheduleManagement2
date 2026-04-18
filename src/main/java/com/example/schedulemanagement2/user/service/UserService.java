@@ -1,9 +1,6 @@
 package com.example.schedulemanagement2.user.service;
 
-import com.example.schedulemanagement2.user.dto.CreateUserRequest;
-import com.example.schedulemanagement2.user.dto.CreateUserResponse;
-import com.example.schedulemanagement2.user.dto.ReadAllUsersResponse;
-import com.example.schedulemanagement2.user.dto.ReadOneUserResponse;
+import com.example.schedulemanagement2.user.dto.*;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +43,7 @@ public class UserService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ReadOneUserResponse findOneUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalStateException("없는 유저")
@@ -56,5 +54,18 @@ public class UserService {
                 user.getEmail(),
                 user.getCreatedAt(),
                 user.getModifiedAt());
+    }
+
+    @Transactional
+    public UpdateUserResponse updateUser(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("없는 유저")
+        );
+        user.update(request.getName());
+        return new UpdateUserResponse(
+                user.getId(),
+                user.getName(),
+                user.getModifiedAt()
+        );
     }
 }
