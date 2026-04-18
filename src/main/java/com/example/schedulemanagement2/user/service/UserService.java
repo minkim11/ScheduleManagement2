@@ -76,4 +76,15 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public SessionUser login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new IllegalStateException("없는 유저")
+        );
+        if (!request.getPassword().equals(user.getPassword())) {
+            throw new IllegalStateException("비밀번호 불일치");
+        }
+        return new SessionUser(user.getId(), user.getEmail());
+    }
 }
