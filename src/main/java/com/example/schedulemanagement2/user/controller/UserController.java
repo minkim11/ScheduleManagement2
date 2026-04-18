@@ -2,6 +2,7 @@ package com.example.schedulemanagement2.user.controller;
 
 import com.example.schedulemanagement2.user.dto.*;
 import com.example.schedulemanagement2.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,5 +49,15 @@ public class UserController {
     ) {
         userService.deleteUser(id);
         return new ResponseEntity<>("삭제되었습니다", HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpSession session
+    ){
+        SessionUser sessionUser = userService.login(request);
+        session.setAttribute("login", sessionUser);
+        return ResponseEntity.status(HttpStatus.OK).body("로그인되었습니다");
     }
 }
