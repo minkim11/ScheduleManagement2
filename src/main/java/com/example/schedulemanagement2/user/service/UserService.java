@@ -1,0 +1,79 @@
+package com.example.schedulemanagement2.user.service;
+
+import com.example.schedulemanagement2.user.dto.*;
+import com.example.schedulemanagement2.user.entity.User;
+import com.example.schedulemanagement2.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    private final UserRepository userRepository;
+
+    @Transactional
+    public CreateUserResponse saveUser(CreateUserRequest request) {
+        User user = new User(
+                request.getName(),
+                request.getEmail(),
+                request.getPassword());
+        User savedUser = userRepository.save(user);
+        return new CreateUserResponse(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getCreatedAt(),
+                savedUser.getModifiedAt());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReadAllUsersResponse> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new ReadAllUsersResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getCreatedAt(),
+                        user.getModifiedAt()
+                ))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public ReadOneUserResponse findOneUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("없는 유저")
+        );
+        return new ReadOneUserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getModifiedAt());
+    }
+
+    @Transactional
+    public UpdateUserResponse updateUser(Long id, UpdateUserRequest request) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("없는 유저")
+        );
+        user.update(request.getName());
+        return new UpdateUserResponse(
+                user.getId(),
+                user.getName(),
+                user.getModifiedAt()
+        );
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalStateException("없는 유저");
+        }
+        userRepository.deleteById(id);
+    }
+}
