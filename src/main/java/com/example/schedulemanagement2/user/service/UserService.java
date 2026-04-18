@@ -68,4 +68,12 @@ public class UserService {
                 user.getModifiedAt()
         );
     }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new IllegalStateException("없는 유저");
+        }
+        userRepository.deleteById(id);
+    }
 }
