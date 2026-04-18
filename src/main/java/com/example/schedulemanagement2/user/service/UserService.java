@@ -2,11 +2,15 @@ package com.example.schedulemanagement2.user.service;
 
 import com.example.schedulemanagement2.user.dto.CreateUserRequest;
 import com.example.schedulemanagement2.user.dto.CreateUserResponse;
+import com.example.schedulemanagement2.user.dto.ReadAllUsersResponse;
+import com.example.schedulemanagement2.user.dto.ReadOneUserResponse;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,5 +30,31 @@ public class UserService {
                 savedUser.getEmail(),
                 savedUser.getCreatedAt(),
                 savedUser.getModifiedAt());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReadAllUsersResponse> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new ReadAllUsersResponse(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getCreatedAt(),
+                        user.getModifiedAt()
+                ))
+                .toList();
+    }
+
+    public ReadOneUserResponse findOneUser(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalStateException("없는 유저")
+        );
+        return new ReadOneUserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                user.getModifiedAt());
     }
 }
