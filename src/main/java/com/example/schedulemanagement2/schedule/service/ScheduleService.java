@@ -74,4 +74,11 @@ public class ScheduleService {
                 schedule.getModifiedAt()
         );
     }
+
+    public void deleteSchedule(Long id) {
+        if (!scheduleRepository.existsById(id)) {
+            throw new IllegalStateException("없는 일정");
+        }
+        scheduleRepository.deleteById(id);
+    }
 }
