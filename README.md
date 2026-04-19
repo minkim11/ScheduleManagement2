@@ -32,7 +32,7 @@ POST /schedules
 | **이름**      | **데이터 타입**    | **설명**                               |
 |-------------|---------------|--------------------------------------|
 | id          | Long          | 일정 식별 id, 응답 시 반환                    |
-| userName      | String        | 로그인한 유저 이름                           |
+| userId      | Long          | 로그인한 유저 id                            |
 | title        | String        | 일정 이름                                |
 | description | String        | 일정 내용                                |
 | createdAt   | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
@@ -54,7 +54,7 @@ POST /schedules
 ```json
 {
   "id": 1,
-  "userName": "Kim",
+  "userId": 1,
   "title": "Study",
   "description": "Spring",
   "createdAt": "2025-04-09T14:30:00.123456",
@@ -84,7 +84,7 @@ GET /schedules
 | **이름** | **데이터 타입** | **설명**            |
 |--------|------------|-------------------|
 | id     | Long       | 일정 식별 id, 응답 시 반환 |
-| userName | String     | 로그인한 유저 이름        |
+| userId | Long       | 로그인한 유저 id        |
 | title   | String     | 일정 이름             |
 
 
@@ -96,12 +96,12 @@ GET /schedules
 [
   {
     "id": 1,
-    "userName": "Kim",
+    "userId": 1,
     "title": "Study"
   },
   {
     "id": 2,
-    "userName": "Kim",
+    "userId": 1,
     "title": "Study"
   }
 ]
@@ -123,7 +123,7 @@ GET /schedules/{id}
 | **이름**      | **데이터 타입**    | **설명**            |
 |-------------|---------------|-------------------|
 | id          | Long          | 일정 식별 id, 응답 시 반환 |
-| userName      | String        | 로그인한 유저 이름        |
+| userId      | Long          | 로그인한 유저 id        |
 | title       | String        | 일정 이름             |
 | description | String        | 일정 내용             |
 | createdAt   | LocalDateTime | 작성일               |
@@ -136,7 +136,7 @@ GET /schedules/{id}
 ```json
 {
   "id": 2,
-  "userName": "Kim",
+  "userId": 1,
   "title": "Study",
   "description": "API",
   "createdAt": "2025-04-09T14:35:00.123456",
@@ -368,7 +368,7 @@ PUT /users/{id}
 ```json
 {
   "id": 1,
-  "name": "일정이름 변경",
+  "name": "유저 이름 변경",
   "modifiedAt": "2025-04-09T15:35:00.654321"
 }
 ```
