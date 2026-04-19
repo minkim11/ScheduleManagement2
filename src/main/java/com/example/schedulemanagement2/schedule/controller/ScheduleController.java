@@ -1,9 +1,6 @@
 package com.example.schedulemanagement2.schedule.controller;
 
-import com.example.schedulemanagement2.schedule.dto.CreateScheduleRequest;
-import com.example.schedulemanagement2.schedule.dto.CreateScheduleResponse;
-import com.example.schedulemanagement2.schedule.dto.ReadAllSchedulesResponse;
-import com.example.schedulemanagement2.schedule.dto.ReadOneScheduleResponse;
+import com.example.schedulemanagement2.schedule.dto.*;
 import com.example.schedulemanagement2.schedule.service.ScheduleService;
 import com.example.schedulemanagement2.user.dto.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +36,14 @@ public class ScheduleController {
             @PathVariable Long id
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readOneSchedule(sessionUser.getId(), id));
+    }
+
+    @PatchMapping("/schedules/{id}")
+    public ResponseEntity<UpdateScheduleResponse> updateSchedule(
+            @PathVariable Long id,
+            @SessionAttribute(name = "login") SessionUser sessionUser,
+            @RequestBody UpdateScheduleRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(id, sessionUser.getId(), request));
     }
 }

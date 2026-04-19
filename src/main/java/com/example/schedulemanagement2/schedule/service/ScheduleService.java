@@ -1,9 +1,6 @@
 package com.example.schedulemanagement2.schedule.service;
 
-import com.example.schedulemanagement2.schedule.dto.CreateScheduleRequest;
-import com.example.schedulemanagement2.schedule.dto.CreateScheduleResponse;
-import com.example.schedulemanagement2.schedule.dto.ReadAllSchedulesResponse;
-import com.example.schedulemanagement2.schedule.dto.ReadOneScheduleResponse;
+import com.example.schedulemanagement2.schedule.dto.*;
 import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
 import com.example.schedulemanagement2.user.entity.User;
@@ -59,6 +56,21 @@ public class ScheduleService {
                 schedule.getTitle(),
                 schedule.getDescription(),
                 schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    @Transactional
+    public UpdateScheduleResponse updateSchedule(Long scheduleId, Long userId, UpdateScheduleRequest request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 일정")
+        );
+        schedule.update(request.getTitle(), request.getDescription());
+        return new UpdateScheduleResponse(
+                schedule.getId(),
+                userId,
+                schedule.getTitle(),
+                schedule.getDescription(),
                 schedule.getModifiedAt()
         );
     }
