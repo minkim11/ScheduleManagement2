@@ -89,6 +89,6 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalStateException("비밀번호 불일치");
         }
-        return new SessionUser(user.getId(), user.getEmail());
+        return new SessionUser(user.getId(), user.getEmail(), user.getName());
     }
 }
