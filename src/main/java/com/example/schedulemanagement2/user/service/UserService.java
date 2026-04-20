@@ -1,6 +1,7 @@
 package com.example.schedulemanagement2.user.service;
 
 import com.example.schedulemanagement2.common.exception.UserNotFoundException;
+import com.example.schedulemanagement2.user.config.PasswordEncoder;
 import com.example.schedulemanagement2.user.dto.*;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
@@ -14,13 +15,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CreateUserResponse saveUser(CreateUserRequest request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = new User(
                 request.getName(),
                 request.getEmail(),
-                request.getPassword());
+                encodedPassword);
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
                 savedUser.getId(),
@@ -83,7 +86,7 @@ public class UserService {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new UserNotFoundException("없는 유저")
         );
-        if (!request.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new IllegalStateException("비밀번호 불일치");
         }
         return new SessionUser(user.getId(), user.getEmail());
