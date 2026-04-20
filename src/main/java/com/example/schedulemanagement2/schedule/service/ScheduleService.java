@@ -7,9 +7,13 @@ import com.example.schedulemanagement2.common.exception.UserNotLoginException;
 import com.example.schedulemanagement2.schedule.dto.*;
 import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
+import com.example.schedulemanagement2.user.dto.SessionUser;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +42,20 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReadAllSchedulesResponse> readAllSchedules(Long id) {
-        List<Schedule> schedules = scheduleRepository.findByUser_Id(id);
+    public List<ReadAllSchedulesResponse> readAllSchedules(SessionUser sessionUser, int pageNum, int pageSize) {
+        Page<Schedule> schedules = scheduleRepository
+                .findByUser_Id(
+                        sessionUser.getId(),
+                        PageRequest.of(pageNum, pageSize, Sort.by("modifiedAt").descending()));
         return schedules.stream()
                 .map(schedule -> new ReadAllSchedulesResponse(
                         schedule.getId(),
-                        id,
-                        schedule.getTitle()
+                        sessionUser.getName(),
+                        schedule.getTitle(),
+                        schedule.getDescription(),
+                        schedule.getComments().size(),
+                        schedule.getCreatedAt(),
+                        schedule.getModifiedAt()
                 ))
                 .toList();
     }

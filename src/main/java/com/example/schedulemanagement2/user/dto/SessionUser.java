@@ -4,11 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class SessionUser {
-    public final Long id;
-    public final String email;
+    private final Long id;
+    private final String email;
+    private final String name;
 
-    public SessionUser(Long id, String email) {
+    public SessionUser(Long id, String email, String name) {
         this.id = id;
         this.email = email;
+        this.name = name;
     }
 }

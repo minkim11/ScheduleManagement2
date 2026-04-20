@@ -26,9 +26,11 @@ public class ScheduleController {
 
     @GetMapping("/schedules")
     public ResponseEntity<List<ReadAllSchedulesResponse>> readAllSchedules(
-            @SessionAttribute(name = "login") SessionUser sessionUser
+            @SessionAttribute(name = "login") SessionUser sessionUser,
+            @RequestParam(name = "page-num", defaultValue = "0") int pageNum,
+            @RequestParam(name = "page-size", defaultValue = "10") int pageSize
     ) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readAllSchedules(sessionUser.getId()));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readAllSchedules(sessionUser, pageNum, pageSize));
     }
 
     @GetMapping("/schedules/{id}")
