@@ -491,6 +491,11 @@ GET /schedules/comments
 
 전체 댓글 배열을 조회합니다.
 
+### Request Header
+| **이름** | **데이터 타입** | **설명** |
+|--------|------------|--------|
+| Cookie | JSESSIONID | 세션 키   |
+
 ### ResponseBody
 
 | **이름**     | **데이터 타입** | **설명**   |

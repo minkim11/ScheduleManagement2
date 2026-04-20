@@ -2,19 +2,20 @@ package com.example.schedulemanagement2.comment.service;
 
 import com.example.schedulemanagement2.comment.dto.CreateCommentRequest;
 import com.example.schedulemanagement2.comment.dto.CreateCommentResponse;
+import com.example.schedulemanagement2.comment.dto.ReadAllCommentsResponse;
 import com.example.schedulemanagement2.comment.entity.Comment;
 import com.example.schedulemanagement2.comment.repository.CommentRepository;
 import com.example.schedulemanagement2.common.exception.ScheduleNotFoundException;
-import com.example.schedulemanagement2.common.exception.UserNotLoginException;
+import com.example.schedulemanagement2.common.exception.UserNotFoundException;
 import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
-import com.example.schedulemanagement2.schedule.service.ScheduleService;
-import com.example.schedulemanagement2.user.dto.SessionUser;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class CommentService {
     @Transactional
     public CreateCommentResponse saveComment(Long scheduleId, Long userId, CreateCommentRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotLoginException("로그인이 필요합니다")
+                () -> new UserNotFoundException("없는 유저")
         );
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException("없는 일정")
@@ -40,5 +41,16 @@ public class CommentService {
                 savedComment.getCreatedAt(),
                 savedComment.getModifiedAt()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReadAllCommentsResponse> readAllComments(Long userId) {
+        List<Comment> comments = commentRepository.findAllByUser_Id(userId);
+        return comments.stream()
+                .map(comment -> new ReadAllCommentsResponse(
+                    comment.getCommentId(),
+                    comment.getSchedule().getId(),
+                    comment.getComment()))
+                .toList();
     }
 }

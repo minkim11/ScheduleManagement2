@@ -1,5 +1,7 @@
 package com.example.schedulemanagement2.schedule.service;
 
+import com.example.schedulemanagement2.comment.dto.ReadAllCommentsResponse;
+import com.example.schedulemanagement2.comment.entity.Comment;
 import com.example.schedulemanagement2.common.exception.ScheduleNotFoundException;
 import com.example.schedulemanagement2.common.exception.UserNotLoginException;
 import com.example.schedulemanagement2.schedule.dto.*;
@@ -52,13 +54,23 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException("없는 일정")
         );
+        List<Comment> comments = schedule.getComments();
+        List<ReadAllCommentsResponse> dtos = comments
+                .stream()
+                .map(comment -> new ReadAllCommentsResponse(
+                        comment.getCommentId(),
+                        scheduleId,
+                        comment.getComment()
+                ))
+                .toList();
         return new ReadOneScheduleResponse(
                 schedule.getId(),
                 userId,
                 schedule.getTitle(),
                 schedule.getDescription(),
                 schedule.getCreatedAt(),
-                schedule.getModifiedAt()
+                schedule.getModifiedAt(),
+                dtos
         );
     }
 
