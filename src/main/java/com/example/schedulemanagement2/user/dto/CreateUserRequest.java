@@ -8,17 +8,17 @@ import lombok.Getter;
 @Getter
 public class CreateUserRequest {
 
-    @NotBlank
-    @Size(max = 10)
+    @NotBlank(message = "이름을 입력해주세요")
+    @Size(max = 10, message = "이름은 10자 이내로 입력해주세요")
     private final String name;
 
-    @NotBlank
+    @NotBlank(message = "이메일을 입력해주세요")
     @Email
-    @Size(max = 50)
+    @Size(max = 50, message = "이메일은 50자 이내로 입력해주세요")
     private final String email;
 
-    @NotBlank
-    @Size(min = 8, max = 16)
+    @NotBlank(message = "비밀번호를 입력해주세요")
+    @Size(min = 8, max = 16, message = "비밀번호는 8자 ~ 16자 이내로 입력해주세요")
     private final String password;
 
     public CreateUserRequest(String name, String email, String password) {

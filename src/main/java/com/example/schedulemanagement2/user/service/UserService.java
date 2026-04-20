@@ -1,5 +1,6 @@
 package com.example.schedulemanagement2.user.service;
 
+import com.example.schedulemanagement2.common.exception.UserNotFoundException;
 import com.example.schedulemanagement2.user.dto.*;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
@@ -46,7 +47,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public ReadOneUserResponse findOneUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalStateException("없는 유저")
+                () -> new UserNotFoundException("없는 유저")
         );
         return new ReadOneUserResponse(
                 user.getId(),
@@ -59,7 +60,7 @@ public class UserService {
     @Transactional
     public UpdateUserResponse updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalStateException("없는 유저")
+                () -> new UserNotFoundException("없는 유저")
         );
         user.update(request.getName());
         return new UpdateUserResponse(
@@ -72,7 +73,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new IllegalStateException("없는 유저");
+            throw new UserNotFoundException("없는 유저");
         }
         userRepository.deleteById(id);
     }
@@ -80,7 +81,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public SessionUser login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new IllegalStateException("없는 유저")
+                () -> new UserNotFoundException("없는 유저")
         );
         if (!request.getPassword().equals(user.getPassword())) {
             throw new IllegalStateException("비밀번호 불일치");
