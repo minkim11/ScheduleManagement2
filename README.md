@@ -17,14 +17,15 @@ POST /schedules
 
 ### Request Header
 | **이름** | **데이터 타입** | **설명** |
-|--------| --- |--------|
+|--------|------------|--------|
 | Cookie | JSESSIONID | 세션 키   |
+
 ### Request Body
 
 | **이름**      | **데이터 타입** | **설명** |
-|-------------| --- | --- |
-| title        | String | 일정 이름 |
-| description | String | 일정 내용 |
+|-------------|------------|--------|
+| title       | String     | 일정 이름  |
+| description | String     | 일정 내용  |
 
 
 ### Response Body
@@ -32,8 +33,8 @@ POST /schedules
 | **이름**      | **데이터 타입**    | **설명**                               |
 |-------------|---------------|--------------------------------------|
 | id          | Long          | 일정 식별 id, 응답 시 반환                    |
-| userId      | Long          | 로그인한 유저 id                            |
-| title        | String        | 일정 이름                                |
+| userId      | Long          | 로그인한 유저 id                           |
+| title       | String        | 일정 이름                                |
 | description | String        | 일정 내용                                |
 | createdAt   | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
 | modifiedAt  | LocalDateTime | 수정일, 자동으로 현재 날짜 저장됨(처음 생성 시 작성일과 동일) |
@@ -75,7 +76,7 @@ GET /schedules
 
 ### Request Header
 | **이름** | **데이터 타입** | **설명** |
-|--------| --- |--------|
+|--------|------------|--------|
 | Cookie | JSESSIONID | 세션 키   |
 
 
@@ -85,7 +86,7 @@ GET /schedules
 |--------|------------|-------------------|
 | id     | Long       | 일정 식별 id, 응답 시 반환 |
 | userId | Long       | 로그인한 유저 id        |
-| title   | String     | 일정 이름             |
+| title  | String     | 일정 이름             |
 
 
 > Response Examples
@@ -115,7 +116,7 @@ GET /schedules/{id}
 
 ### Request Header
 | **이름** | **데이터 타입** | **설명** |
-|--------| --- |--------|
+|--------|------------|--------|
 | Cookie | JSESSIONID | 세션 키   |
 
 ### Response Body
@@ -128,6 +129,7 @@ GET /schedules/{id}
 | description | String        | 일정 내용             |
 | createdAt   | LocalDateTime | 작성일               |
 | modifiedAt  | LocalDateTime | 수정일               |
+| comments    | List          | 해당 일정 댓글 배열       |
 
 > Response Examples
 
@@ -140,7 +142,23 @@ GET /schedules/{id}
   "title": "Study",
   "description": "API",
   "createdAt": "2025-04-09T14:35:00.123456",
-  "modifiedAt": "2025-04-09T14:35:00.123456"
+  "modifiedAt": "2025-04-09T14:35:00.123456",
+  "comments": [
+    {
+      "commentId": 1,
+      "scheduleId": 2,
+      "comment": "댓글 남기기",
+      "createdAt": "2025-04-09T14:30:00.123456",
+      "modifiedAt": "2025-04-09T14:30:00.123456"
+    },
+    {
+      "commentId": 2,
+      "scheduleId": 2,
+      "comment": "댓글 남기기222",
+      "createdAt": "2025-04-09T14:30:00.123456",
+      "modifiedAt": "2025-04-09T14:30:00.123456"
+    }
+  ]
 }
 ```
 
@@ -152,24 +170,24 @@ PUT /schedules/{id}
 
 ### Request Header
 | **이름** | **데이터 타입** | **설명** |
-|--------| --- |--------|
+|--------|------------|--------|
 | Cookie | JSESSIONID | 세션 키   |
 
 ### RequestBody
 
-| **이름**       | **데이터 타입** | **설명**          |
-|--------------| --- |-----------------|
-| title | String | 일정 이름           |
-| desciption   | String | 일정 내용           |
+| **이름**     | **데이터 타입** | **설명** |
+|------------|------------|--------|
+| title      | String     | 일정 이름  |
+| desciption | String     | 일정 내용  |
 
 ### ResponseBody
 
-| **이름**       | **데이터 타입** | **설명**            |
-|--------------| --- |-------------------|
-| id   | Long | 일정 식별 id, 응답 시 반환 |
-| title | String | 일정 이름             |
-| description  | String | 일정 내용             |
-| modifiedAt   | LocalDateTime | 수정일               |
+| **이름**      | **데이터 타입**    | **설명**            |
+|-------------|---------------|-------------------|
+| id          | Long          | 일정 식별 id, 응답 시 반환 |
+| title       | String        | 일정 이름             |
+| description | String        | 일정 내용             |
+| modifiedAt  | LocalDateTime | 수정일               |
 
 > Body Parameters
 
@@ -202,7 +220,7 @@ DELETE /schedules/{id}
 
 ### Request Header
 | **이름** | **데이터 타입** | **설명** |
-|--------| --- |--------|
+|--------|------------|--------|
 | Cookie | JSESSIONID | 세션 키   |
 
 
@@ -223,18 +241,18 @@ POST /users
 
 | **이름**   | **데이터 타입** | **설명** |
 |----------|------------|--------|
-| name | String     | 유저 이름  |
+| name     | String     | 유저 이름  |
 | email    | String     | 이메일    |
 | password | String     | 비밀번호   |
 
 
 ### Response Body
 
-| **이름**         | **데이터 타입** | **설명**                               |
-|----------------| --- |--------------------------------------|
-| id         | Long | 유저 식별 id                             |
-| name       | String     | 유저 이름                                |
-| email          | String     | 이메일                                  |
+| **이름**     | **데이터 타입**    | **설명**                               |
+|------------|---------------|--------------------------------------|
+| id         | Long          | 유저 식별 id                             |
+| name       | String        | 유저 이름                                |
+| email      | String        | 이메일                                  |
 | createdAt  | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
 | modifiedAt | LocalDateTime | 수정일, 자동으로 현재 날짜 저장됨(처음 생성 시 작성일과 동일) |
 
@@ -269,11 +287,11 @@ GET /users
 
 ### ResponseBody
 
-| **이름**         | **데이터 타입** | **설명**                               |
-|----------------| --- |--------------------------------------|
-| id         | Long | 유저 식별 id                             |
-| name       | String     | 유저 이름                                |
-| email          | String     | 이메일                                  |
+| **이름**     | **데이터 타입**    | **설명**                               |
+|------------|---------------|--------------------------------------|
+| id         | Long          | 유저 식별 id                             |
+| name       | String        | 유저 이름                                |
+| email      | String        | 이메일                                  |
 | createdAt  | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
 | modifiedAt | LocalDateTime | 수정일, 자동으로 현재 날짜 저장됨(처음 생성 시 작성일과 동일) |
 
@@ -309,11 +327,11 @@ GET /users/{id}
 
 ### Response Body
 
-| **이름**         | **데이터 타입** | **설명**                               |
-|----------------| --- |--------------------------------------|
-| id         | Long | 유저 식별 id                             |
-| name       | String     | 유저 이름                                |
-| email          | String     | 이메일                                  |
+| **이름**     | **데이터 타입**    | **설명**                               |
+|------------|---------------|--------------------------------------|
+| id         | Long          | 유저 식별 id                             |
+| name       | String        | 유저 이름                                |
+| email      | String        | 이메일                                  |
 | createdAt  | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
 | modifiedAt | LocalDateTime | 수정일, 자동으로 현재 날짜 저장됨(처음 생성 시 작성일과 동일) |
 
@@ -341,16 +359,16 @@ PUT /users/{id}
 
 ### RequestBody
 
-| **이름**     | **데이터 타입** | **설명** |
-|------------| --- |--------|
-| name   | String | 유저 이름  |
+| **이름** | **데이터 타입** | **설명** |
+|--------|------------|--------|
+| name   | String     | 유저 이름  |
 
 ### ResponseBody
 
-| **이름**         | **데이터 타입** | **설명**   |
-|----------------| --- |----------|
-| id         | Long | 유저 식별 id |
-| name       | String | 유저 이름    |
+| **이름**     | **데이터 타입**    | **설명**   |
+|------------|---------------|----------|
+| id         | Long          | 유저 식별 id |
+| name       | String        | 유저 이름    |
 | modifiedAt | LocalDateTime | 수정일      |
 
 > Body Parameters
@@ -395,13 +413,13 @@ POST /login
 ### RequestBody
 
 | **이름**   | **데이터 타입** | **설명** |
-|----------| --- |--------|
-| email    | String | 이메일    |
-| password | String | 비밀번호   |
+|----------|------------|--------|
+| email    | String     | 이메일    |
+| password | String     | 비밀번호   |
 
 ### ResponseHeader
 | **이름**     | **데이터 타입** | **설명** |
-|------------| --- |--------|
+|------------|------------|--------|
 | Set-Cookie | JSESSIONID | 세션 키   |
 
 > Response Examples
@@ -414,6 +432,95 @@ POST /login
 > 400 Response
 ```text
 "비밀번호 오류"
+```
+
+## POST 댓글 생성
+
+POST /schedules/{scheduleId}/comments
+
+일정에 댓글을 생성합니다.
+
+### Request Header
+| **이름** | **데이터 타입** | **설명** |
+|--------|------------|--------|
+| Cookie | JSESSIONID | 세션 키   |
+
+### Request Body
+
+| **이름**     | **데이터 타입** | **설명**    |
+|------------|------------|-----------|
+| comment    | String     | 댓글 내용     |
+
+
+
+### Response Body
+
+| **이름**     | **데이터 타입**    | **설명**                               |
+|------------|---------------|--------------------------------------|
+| commentId  | Long          | 댓글 식별 id                             |
+| scheduleId | Long          | 일정 식별 id                             |
+| comment    | String        | 댓글 내용                                |
+| createdAt  | LocalDateTime | 작성일, 자동으로 현재 날짜 저장됨                  |
+| modifiedAt | LocalDateTime | 수정일, 자동으로 현재 날짜 저장됨(처음 생성 시 작성일과 동일) |
+
+> Body Parameters
+
+```json
+{
+  "comment": "댓글 남기기"
+}
+```
+
+> Response Examples
+
+> 201 Response
+
+```json
+{
+  "commentId": 1,
+  "scheduleId": 1,
+  "comment": "댓글 남기기",
+  "createdAt": "2025-04-09T14:30:00.123456",
+  "modifiedAt": "2025-04-09T14:30:00.123456"
+}
+```
+
+## GET 댓글 전체 조회
+
+GET /schedules/comments
+
+전체 댓글 배열을 조회합니다.
+
+### Request Header
+| **이름** | **데이터 타입** | **설명** |
+|--------|------------|--------|
+| Cookie | JSESSIONID | 세션 키   |
+
+### ResponseBody
+
+| **이름**     | **데이터 타입** | **설명**   |
+|------------|------------|----------|
+| commentId  | Long       | 댓글 식별 id |
+| scheduleId | Long       | 일정 식별 id |
+| comment    | String     | 댓글 내용    |
+
+> Response Examples
+
+> 200 Response
+
+```json
+[
+  {
+    "commentId": 1,
+    "scheduleId": 1,
+    "comment": "댓글 남기기"
+  },
+  {
+    "commentId": 2,
+    "scheduleId": 1,
+    "comment": "댓글 남기기222"
+  }
+]
 ```
 
 ## 프로젝트 구조
