@@ -7,13 +7,13 @@ import lombok.Getter;
 
 @Getter
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "이메일을 입력해주세요")
     @Email
-    @Size(max = 50)
+    @Size(max = 50, message = "이메일은 50자 이내로 입력해주세요")
     private final String email;
 
-    @NotBlank
-    @Size(min = 8, max = 16)
+    @NotBlank(message = "비밀번호를 입력해주세요")
+    @Size(min = 8, max = 16, message = "비밀번호는 8자 ~ 16자 이내로 입력해주세요")
     private final String password;
 
     public LoginRequest(String email, String password) {
