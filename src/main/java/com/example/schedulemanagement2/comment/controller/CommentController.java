@@ -18,24 +18,27 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+    // 일정에 댓글 생성
     @PostMapping("/schedules/{scheduleId}/comments")
     public ResponseEntity<CreateCommentResponse> createComment(
             @PathVariable Long scheduleId,
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser,
             @RequestBody CreateCommentRequest request
     ) {
-        userLoginCheck(sessionUser);
+        userLoginCheck(sessionUser); // 로그인 여부 확인
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.saveComment(scheduleId,sessionUser.getId(), request));
     }
 
+    // 댓글 전체 조회
     @GetMapping("/schedules/comments")
     public ResponseEntity<List<ReadAllCommentsResponse>> readComment(
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser
     ) {
-        userLoginCheck(sessionUser);
+        userLoginCheck(sessionUser); // 로그인 여부 확인
         return ResponseEntity.status(HttpStatus.OK).body(commentService.readAllComments(sessionUser.getId()));
     }
 
+    // 로그인 여부 확인 메서드
     private void userLoginCheck(SessionUser sessionUser) {
         if (sessionUser == null) {
             throw new UserNotLoginException("로그인이 필요합니다");

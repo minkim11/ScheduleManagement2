@@ -6,11 +6,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 
+
+// 전역 예외 처리
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Bean Validation 예외 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handlerNotValidException(MethodArgumentNotValidException e) {
         String exceptionMessage = e.getBindingResult().getFieldErrors()
@@ -25,11 +27,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handlerIllegalStateException(IllegalStateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-    }
-
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<String> handlerUniqueEmailException(SQLIntegrityConstraintViolationException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용중인 이메일");
     }
 
     @ExceptionHandler(ServiceException.class)

@@ -3,10 +3,10 @@ package com.example.schedulemanagement2.common.exception;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-// 유저 없을 경우 예외
+// 이메일 중복 시 예외
 @Getter
-public class UserNotFoundException extends ServiceException{
-    public UserNotFoundException(String message) {
+public class EmailNotUniqueException extends ServiceException{
+    public EmailNotUniqueException(String message) {
         super(HttpStatus.BAD_REQUEST, message);
     }
 }

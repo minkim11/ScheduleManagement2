@@ -2,13 +2,14 @@
 
 ## 프로젝트 설명
 스프링을 사용해 일정, 유저 CRUD, 로그인 구현  
-의존성: Lombok, spring Web, mySQL driver, spring data JPA
+의존성 : Lombok, spring Web, mySQL driver, spring data JPA, validation  
+외부라이브러리 : favre.lib:bcrypt
 
 ## ERD
 <img src="img/ERD.png" alt="">
 
 ## API 명세서
-일정과 유저 CRUD, 로그인 API
+일정, 유저, 댓글 CRUD, 로그인 API
 ## POST 일정 생성
 
 POST /schedules
@@ -226,7 +227,7 @@ DELETE /schedules/{id}
 
 > Response Examples
 
-> 204 Response
+> 200 Response
 ```text
 "삭제되었습니다"
 ```
@@ -400,7 +401,7 @@ DELETE /users/{id}
 
 > Response Examples
 
-> 204 Response
+> 200 Response
 ```text
 "삭제되었습니다"
 ```
@@ -526,3 +527,25 @@ GET /schedules/comments
 ## 프로젝트 구조
 
 <img src="img/project.png" alt="">
+
+## 기능
+
+- 유저를 생성(회원가입), 수정, 조회, 삭제합니다.
+- 이메일과 비밀번호로 로그인할 수 있습니다.
+- 로그인 후 일정을 생성, 조회, 수정, 삭제합니다.
+- 일정에 댓글을 생성, 전체 조회 할 수 있습니다.
+
+## 결과
+
+과제의 요구사항에 맞게 최대한 구현하였습니다.
+
+- 일정, 유저, 댓글 CRUD (연관관계 사용)
+- 로그인 기능 구현 (Session 사용)
+- 비밀번호 암호화 (Bcrypt 라이브러리 사용)
+- 예외처리 (Bean Validation 사용)
+- 페이지네이션 구현 (JPA 쿼리메소드, Page, Pageable)
+
+3 Layer Architecture로 CRUD 구현이 스스로 가능해졌습니다.  
+각 계층별로 의도에 맞게 구현하였고, PathVariable, RequestBody, RequestParam 파라미터를 이해하고 사용하였습니다.  
+
+비밀번호 암호화, HttpSession, 페이지네이션은 추후에도 구현해보며 보충

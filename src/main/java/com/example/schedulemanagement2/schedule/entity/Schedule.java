@@ -7,10 +7,14 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SQLDelete(sql = "UPDATE schedules SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 @Getter
 @Table(name = "schedules")
@@ -21,11 +25,14 @@ public class Schedule extends BaseEntity {
     private Long id;
     private String title;
     private String description;
+    private boolean deleted = false;
 
+    // users 테이블과 연관관계 설정
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // 일정 조회 시 댓글 확인을 위해 양방향 설정
     @OneToMany(mappedBy = "schedule")
     private final List<Comment> comments = new ArrayList<>();
 
