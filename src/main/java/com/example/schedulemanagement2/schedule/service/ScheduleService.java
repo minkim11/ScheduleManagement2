@@ -9,6 +9,7 @@ import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
 import com.example.schedulemanagement2.user.dto.SessionUser;
 import com.example.schedulemanagement2.user.entity.User;
+import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // 일정 생성
     @Transactional
     public CreateScheduleResponse saveSchedule(CreateScheduleRequest request, Long id) {
-        User user = scheduleRepository.findByUser_Id(id).orElseThrow(() -> new UserNotFoundException("없는 유저"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("없는 유저"));
         Schedule schedule = new Schedule(request.getTitle(), request.getDescription(), user);
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
