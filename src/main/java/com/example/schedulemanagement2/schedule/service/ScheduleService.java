@@ -4,6 +4,8 @@ import com.example.schedulemanagement2.comment.dto.ReadAllCommentsResponse;
 import com.example.schedulemanagement2.comment.entity.Comment;
 import com.example.schedulemanagement2.common.exception.ScheduleNotFoundException;
 import com.example.schedulemanagement2.common.exception.UserNotFoundException;
+import com.example.schedulemanagement2.common.exception.UserNotLoginException;
+import com.example.schedulemanagement2.common.interfaces.UserCheck;
 import com.example.schedulemanagement2.schedule.dto.*;
 import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
@@ -21,14 +23,15 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleService {
+public class ScheduleService implements UserCheck {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
     // 일정 생성
     @Transactional
-    public CreateScheduleResponse saveSchedule(CreateScheduleRequest request, Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("없는 유저"));
+    public CreateScheduleResponse saveSchedule(CreateScheduleRequest request, SessionUser sessionUser) {
+        userCheck(sessionUser); // 로그인 여부 확인
+        User user = userRepository.findById(sessionUser.getId()).orElseThrow(() -> new UserNotFoundException("없는 유저"));
         Schedule schedule = new Schedule(request.getTitle(), request.getDescription(), user);
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
@@ -38,13 +41,14 @@ public class ScheduleService {
                 savedSchedule.getDescription(),
                 savedSchedule.getCreatedAt(),
                 savedSchedule.getModifiedAt(),
-                id
+                sessionUser.getId()
         );
     }
 
     // 일정 전체 조회, 페이지네이션, 정렬
     @Transactional(readOnly = true)
     public List<ReadAllSchedulesResponse> readAllSchedules(SessionUser sessionUser, int pageNum, int pageSize) {
+        userCheck(sessionUser); // 로그인 여부 확인
         // 일정 페이지 생성
         Page<Schedule> schedules = scheduleRepository
                 .findByUser_Id(
@@ -67,7 +71,8 @@ public class ScheduleService {
 
     // 일정 단건 조회
     @Transactional(readOnly = true)
-    public ReadOneScheduleResponse readOneSchedule(Long userId, Long scheduleId) {
+    public ReadOneScheduleResponse readOneSchedule(SessionUser sessionUser, Long scheduleId) {
+        userCheck(sessionUser); // 로그인 여부 확인
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException("없는 일정")
         );
@@ -83,7 +88,7 @@ public class ScheduleService {
                 .toList();
         return new ReadOneScheduleResponse(
                 schedule.getId(),
-                userId,
+                sessionUser.getId(),
                 schedule.getTitle(),
                 schedule.getDescription(),
                 schedule.getCreatedAt(),
@@ -94,14 +99,15 @@ public class ScheduleService {
 
     // 일정 수정
     @Transactional
-    public UpdateScheduleResponse updateSchedule(Long scheduleId, Long userId, UpdateScheduleRequest request) {
+    public UpdateScheduleResponse updateSchedule(Long scheduleId, SessionUser sessionUser, UpdateScheduleRequest request) {
+        userCheck(sessionUser); // 로그인 여부 확인
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException("없는 일정")
         );
         schedule.update(request.getTitle(), request.getDescription());
         return new UpdateScheduleResponse(
                 schedule.getId(),
-                userId,
+                sessionUser.getId(),
                 schedule.getTitle(),
                 schedule.getDescription(),
                 schedule.getModifiedAt()
@@ -110,10 +116,19 @@ public class ScheduleService {
 
     // 일정 삭제
     @Transactional
-    public void deleteSchedule(Long id) {
+    public void deleteSchedule(Long id, SessionUser sessionUser) {
+        userCheck(sessionUser); // 로그인 여부 확인
         if (!scheduleRepository.existsById(id)) {
             throw new ScheduleNotFoundException("없는 일정");
         }
         scheduleRepository.deleteById(id);
+    }
+
+    // 로그인 여부 확인 후 예외 발생 메서드
+    @Override
+    public void userCheck(SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new UserNotLoginException("로그인이 필요합니다");
+        }
     }
 }

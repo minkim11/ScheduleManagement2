@@ -1,6 +1,5 @@
 package com.example.schedulemanagement2.schedule.controller;
 
-import com.example.schedulemanagement2.common.exception.UserNotLoginException;
 import com.example.schedulemanagement2.schedule.dto.*;
 import com.example.schedulemanagement2.schedule.service.ScheduleService;
 import com.example.schedulemanagement2.user.dto.SessionUser;
@@ -23,8 +22,7 @@ public class ScheduleController {
             @Valid @RequestBody CreateScheduleRequest request,
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser
     ) {
-        userLoginCheck(sessionUser); // 로그인 여부 확인
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(request, sessionUser.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.saveSchedule(request, sessionUser));
     }
 
     // 일정 전체 조회, 페이지네이션 구현 - 쿼리 파라미터 미입력 시 페이지 크기 10, 페이지 번호 0 (로그인 시 가능)
@@ -34,7 +32,6 @@ public class ScheduleController {
             @RequestParam(name = "page-num", defaultValue = "0") int pageNum,
             @RequestParam(name = "page-size", defaultValue = "10") int pageSize
     ) {
-        userLoginCheck(sessionUser); // 로그인 여부 확인
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readAllSchedules(sessionUser, pageNum, pageSize));
     }
 
@@ -44,8 +41,7 @@ public class ScheduleController {
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser,
             @PathVariable Long id
     ) {
-        userLoginCheck(sessionUser); // 로그인 여부 확인
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readOneSchedule(sessionUser.getId(), id));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.readOneSchedule(sessionUser, id));
     }
 
     // 일정 수정 (로그인 시 가능)
@@ -55,8 +51,7 @@ public class ScheduleController {
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser,
             @Valid @RequestBody UpdateScheduleRequest request
     ) {
-        userLoginCheck(sessionUser); // 로그인 여부 확인
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(id, sessionUser.getId(), request));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.updateSchedule(id, sessionUser, request));
     }
 
     // 일정 삭제(로그인 시 가능)
@@ -65,15 +60,9 @@ public class ScheduleController {
             @PathVariable Long id,
             @SessionAttribute(name = "login", required = false) SessionUser sessionUser
     ) {
-        userLoginCheck(sessionUser); // 로그인 여부 확인
-        scheduleService.deleteSchedule(id);
+        scheduleService.deleteSchedule(id, sessionUser);
         return ResponseEntity.status(HttpStatus.OK).body("삭제되었습니다");
     }
 
-    // 로그인 여부 확인 후 예외 발생 메서드
-    private void userLoginCheck(SessionUser sessionUser) {
-        if (sessionUser == null) {
-            throw new UserNotLoginException("로그인이 필요합니다");
-        }
-    }
+
 }

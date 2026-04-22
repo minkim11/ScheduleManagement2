@@ -7,8 +7,11 @@ import com.example.schedulemanagement2.comment.entity.Comment;
 import com.example.schedulemanagement2.comment.repository.CommentRepository;
 import com.example.schedulemanagement2.common.exception.ScheduleNotFoundException;
 import com.example.schedulemanagement2.common.exception.UserNotFoundException;
+import com.example.schedulemanagement2.common.exception.UserNotLoginException;
+import com.example.schedulemanagement2.common.interfaces.UserCheck;
 import com.example.schedulemanagement2.schedule.entity.Schedule;
 import com.example.schedulemanagement2.schedule.repository.ScheduleRepository;
+import com.example.schedulemanagement2.user.dto.SessionUser;
 import com.example.schedulemanagement2.user.entity.User;
 import com.example.schedulemanagement2.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +22,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CommentService {
+public class CommentService implements UserCheck {
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
     // 댓글 생성
     @Transactional
-    public CreateCommentResponse saveComment(Long scheduleId, Long userId, CreateCommentRequest request) {
+    public CreateCommentResponse saveComment(Long scheduleId, SessionUser sessionUser, CreateCommentRequest request) {
+        userCheck(sessionUser); // 로그인 여부 확인
         // 댓글 필드 저장 위해 유저, 일정 가져오기
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findById(sessionUser.getId()).orElseThrow(
                 () -> new UserNotFoundException("없는 유저")
         );
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
@@ -47,13 +51,22 @@ public class CommentService {
 
     // 댓글 전체 조회
     @Transactional(readOnly = true)
-    public List<ReadAllCommentsResponse> readAllComments(Long userId) {
-        List<Comment> comments = commentRepository.findAllByUser_IdAndSchedule_Deleted(userId, false);
+    public List<ReadAllCommentsResponse> readAllComments(SessionUser sessionUser) {
+        userCheck(sessionUser); // 로그인 여부 확인
+        List<Comment> comments = commentRepository.findAllByUser_IdAndSchedule_Deleted(sessionUser.getId(), false);
         return comments.stream()
                 .map(comment -> new ReadAllCommentsResponse(
                     comment.getCommentId(),
                     comment.getSchedule().getId(),
                     comment.getComment()))
                 .toList();
+    }
+
+    // 로그인 여부 확인 메서드
+    @Override
+    public void userCheck(SessionUser sessionUser) {
+        if (sessionUser == null) {
+            throw new UserNotLoginException("로그인이 필요합니다");
+        }
     }
 }
